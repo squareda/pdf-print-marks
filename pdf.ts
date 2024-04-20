@@ -15,8 +15,9 @@ const run = async (options: {
   width: number;
   height: number;
   docName?: string;
+  mirror?: boolean;
 }) => {
-  const file = fs.readFileSync("test2.pdf");
+  const file = fs.readFileSync("test.pdf");
   const pdfDoc = await PDFDocument.load(file);
   const WIDTH = mmToPoints(options.width);
   const HEIGHT = mmToPoints(options.height);
@@ -48,18 +49,61 @@ const run = async (options: {
 
   const date = new Date();
 
+  const clonedPages = await outputPdf.embedPages(pdfDoc.getPages());
   for (let i = 0; i < pages.length; i++) {
-    const [clonedPage] = await outputPdf.embedPdf(pdfDoc, [i]);
     const newPage = outputPdf.addPage([
       WIDTH + pagePadding * 2,
       HEIGHT + pagePadding * 2,
     ]);
-    newPage.drawPage(clonedPage, {
-      x: CROP_LENGTH,
-      y: CROP_LENGTH,
-      width: WIDTH + bleedLength * 2,
-      height: HEIGHT + bleedLength * 2,
+    const mirror = options.mirror && i === 0;
+    newPage.drawPage(clonedPages[i], {
+      x: mirror ? pagePadding : CROP_LENGTH,
+      y: mirror ? pagePadding : CROP_LENGTH,
+      width: mirror ? WIDTH : WIDTH + bleedLength * 2,
+      height: mirror ? HEIGHT : HEIGHT + bleedLength * 2,
     });
+
+    if (mirror) {
+      // Right
+      newPage.drawPage(clonedPages[i], {
+        x: WIDTH * 2 + CROP_LENGTH + bleedLength,
+        y: CROP_LENGTH + bleedLength,
+        width: -WIDTH,
+        height: HEIGHT,
+        yScale: 1,
+        xScale: -1,
+      });
+
+      // Left
+      newPage.drawPage(clonedPages[i], {
+        x: bleedLength + CROP_LENGTH,
+        y: CROP_LENGTH + bleedLength,
+        width: -WIDTH,
+        height: HEIGHT,
+        yScale: 1,
+        xScale: -1,
+      });
+
+      // Bottom
+      newPage.drawPage(clonedPages[i], {
+        x: bleedLength + CROP_LENGTH,
+        y: bleedLength + CROP_LENGTH,
+        width: WIDTH,
+        height: -HEIGHT,
+        yScale: -1,
+        xScale: 1,
+      });
+
+      // Top
+      newPage.drawPage(clonedPages[i], {
+        x: bleedLength + CROP_LENGTH,
+        y: HEIGHT * 2 + bleedLength + CROP_LENGTH,
+        width: WIDTH,
+        height: -HEIGHT,
+        yScale: -1,
+        xScale: 1,
+      });
+    }
 
     addColorBars(newPage, pagePadding, bleedLength);
     addRegistrationMarks(newPage, bleedLength);
@@ -77,4 +121,10 @@ const run = async (options: {
   fs.writeFileSync("output3.pdf", pdfBytes);
 };
 
-run({ bleed: 2, width: 148, height: 185, docName: "group-cards.indd" });
+run({
+  bleed: 2,
+  width: 148,
+  height: 185,
+  docName: "group-cards.indd",
+  mirror: true,
+});
