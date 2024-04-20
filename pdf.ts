@@ -4,6 +4,7 @@ import { addColorBars } from "./colorbars";
 import { addRegistrationMarks } from "./registrationMark";
 import addCropMarks from "./cropMarks";
 import addMetadata from "./addMetadata";
+import mirrorBleed from "./mirrorBleed";
 
 const mmToPoints = (mm: number) => mm * 2.83465;
 
@@ -64,44 +65,14 @@ const run = async (options: {
     });
 
     if (mirror) {
-      // Right
-      newPage.drawPage(clonedPages[i], {
-        x: WIDTH * 2 + CROP_LENGTH + bleedLength,
-        y: CROP_LENGTH + bleedLength,
-        width: -WIDTH,
-        height: HEIGHT,
-        yScale: 1,
-        xScale: -1,
-      });
-
-      // Left
-      newPage.drawPage(clonedPages[i], {
-        x: bleedLength + CROP_LENGTH,
-        y: CROP_LENGTH + bleedLength,
-        width: -WIDTH,
-        height: HEIGHT,
-        yScale: 1,
-        xScale: -1,
-      });
-
-      // Bottom
-      newPage.drawPage(clonedPages[i], {
-        x: bleedLength + CROP_LENGTH,
-        y: bleedLength + CROP_LENGTH,
+      await mirrorBleed({
+        page: pdfDoc.getPage(i),
+        outputPdf,
+        newPage,
+        bleedLength,
+        cropLength: CROP_LENGTH,
         width: WIDTH,
-        height: -HEIGHT,
-        yScale: -1,
-        xScale: 1,
-      });
-
-      // Top
-      newPage.drawPage(clonedPages[i], {
-        x: bleedLength + CROP_LENGTH,
-        y: HEIGHT * 2 + bleedLength + CROP_LENGTH,
-        width: WIDTH,
-        height: -HEIGHT,
-        yScale: -1,
-        xScale: 1,
+        height: HEIGHT,
       });
     }
 
