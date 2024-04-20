@@ -1,9 +1,10 @@
-import { PDFDocument, PDFPage } from "@cantoo/pdf-lib";
+import { PDFDocument, PDFPage, PDFEmbeddedPage } from "@cantoo/pdf-lib";
 
 /**
  * Mirror the edges of the pdf to create the bleed
  */
 const mirrorBleed = async ({
+  currentPage,
   page,
   outputPdf,
   newPage,
@@ -12,6 +13,7 @@ const mirrorBleed = async ({
   width,
   height,
 }: {
+  currentPage: PDFEmbeddedPage;
   page: PDFPage;
   outputPdf: PDFDocument;
   newPage: PDFPage;
@@ -23,7 +25,7 @@ const mirrorBleed = async ({
   const originalWidth = page.getWidth();
   const originalHeight = page.getHeight();
   const clonedPage1 = await outputPdf.embedPages(
-    [page, page, page, page],
+    [page, page, page, page, page],
     [
       // Right
       {
@@ -55,6 +57,22 @@ const mirrorBleed = async ({
       },
     ]
   );
+
+  //   Corners
+  newPage.drawPage(clonedPage1[4], {
+    x: cropLength,
+    y: cropLength,
+    height: height + bleedLength * 2,
+    width: width + bleedLength * 2,
+  });
+
+  // main card
+  newPage.drawPage(currentPage, {
+    x: bleedLength + cropLength,
+    y: bleedLength + cropLength,
+    width,
+    height,
+  });
 
   // Right
   newPage.drawPage(clonedPage1[0], {

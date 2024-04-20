@@ -57,15 +57,10 @@ const run = async (options: {
       HEIGHT + pagePadding * 2,
     ]);
     const mirror = options.mirror && i === 0;
-    newPage.drawPage(clonedPages[i], {
-      x: mirror ? pagePadding : CROP_LENGTH,
-      y: mirror ? pagePadding : CROP_LENGTH,
-      width: mirror ? WIDTH : WIDTH + bleedLength * 2,
-      height: mirror ? HEIGHT : HEIGHT + bleedLength * 2,
-    });
 
     if (mirror) {
       await mirrorBleed({
+        currentPage: clonedPages[i],
         page: pdfDoc.getPage(i),
         outputPdf,
         newPage,
@@ -73,6 +68,13 @@ const run = async (options: {
         cropLength: CROP_LENGTH,
         width: WIDTH,
         height: HEIGHT,
+      });
+    } else {
+      newPage.drawPage(clonedPages[i], {
+        x: CROP_LENGTH,
+        y: CROP_LENGTH,
+        width: WIDTH + bleedLength * 2,
+        height: HEIGHT + bleedLength * 2,
       });
     }
 
