@@ -1,61 +1,55 @@
 import { PDFPage, colorString } from "@cantoo/pdf-lib";
 
-// TODO make background white
 const addCropMarks = (page: PDFPage, bleed = 0) => {
-  const defaultProps = {
-    thickness: 0.25,
-    color: colorString("#000").rgb,
-  };
   const offset = 21 + bleed;
   const length = 18;
   const pageWidth = page.getWidth();
   const pageHeight = page.getHeight();
 
+  const draw = (startX: number, startY: number, endX: number, endY: number) => {
+    const position = {
+      start: { x: startX, y: startY },
+      end: { x: endX, y: endY },
+    };
+    // Background
+    page.drawLine({
+      ...position,
+      thickness: 1,
+      color: colorString("#fff").rgb,
+    });
+    // line
+    page.drawLine({
+      ...position,
+      thickness: 0.25,
+      color: colorString("#000").rgb,
+    });
+  };
+
   // Top Left
-  page.drawLine({
-    start: { x: bleed, y: pageHeight - offset },
-    end: { x: length + bleed, y: pageHeight - offset },
-    ...defaultProps,
-  });
-  page.drawLine({
-    start: { x: offset, y: pageHeight - bleed },
-    end: { x: offset, y: pageHeight - length - bleed },
-    ...defaultProps,
-  });
+  draw(bleed, pageHeight - offset, length + bleed, pageHeight - offset);
+  draw(offset, pageHeight - bleed, offset, pageHeight - length - bleed);
 
   // Top Right
-  page.drawLine({
-    start: { x: pageWidth - bleed, y: pageHeight - offset },
-    end: { x: pageWidth - length - bleed, y: pageHeight - offset },
-    ...defaultProps,
-  });
-  page.drawLine({
-    start: { x: pageWidth - offset, y: pageHeight - bleed },
-    end: { x: pageWidth - offset, y: pageHeight - length - bleed },
-    ...defaultProps,
-  });
+  draw(
+    pageWidth - bleed,
+    pageHeight - offset,
+    pageWidth - length - bleed,
+    pageHeight - offset
+  );
+  draw(
+    pageWidth - offset,
+    pageHeight - bleed,
+    pageWidth - offset,
+    pageHeight - length - bleed
+  );
+
   // Bottom Left
-  page.drawLine({
-    start: { x: bleed, y: offset },
-    end: { x: length + bleed, y: offset },
-    ...defaultProps,
-  });
-  page.drawLine({
-    start: { x: offset, y: bleed },
-    end: { x: offset, y: length + bleed },
-    ...defaultProps,
-  });
+  draw(bleed, offset, length + bleed, offset);
+  draw(offset, bleed, offset, length + bleed);
+
   // Bottom Right
-  page.drawLine({
-    start: { x: pageWidth - bleed, y: offset },
-    end: { x: pageWidth - length - bleed, y: offset },
-    ...defaultProps,
-  });
-  page.drawLine({
-    start: { x: pageWidth - offset, y: bleed },
-    end: { x: pageWidth - offset, y: length + bleed },
-    ...defaultProps,
-  });
+  draw(pageWidth - bleed, offset, pageWidth - length - bleed, offset);
+  draw(pageWidth - offset, bleed, pageWidth - offset, length + bleed);
 };
 
 export default addCropMarks;
