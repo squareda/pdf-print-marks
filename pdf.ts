@@ -17,8 +17,10 @@ const run = async (options: {
   height: number;
   docName?: string;
   mirror?: boolean;
+  output: string;
+  input: string;
 }) => {
-  const file = fs.readFileSync("test.pdf");
+  const file = fs.readFileSync(options.input);
   const pdfDoc = await PDFDocument.load(file);
   const WIDTH = mmToPoints(options.width);
   const HEIGHT = mmToPoints(options.height);
@@ -80,7 +82,7 @@ const run = async (options: {
 
     addColorBars(newPage, pagePadding, bleedLength);
     addRegistrationMarks(newPage, bleedLength);
-    addCropMarks(newPage);
+    addCropMarks(newPage, 0, "bleed");
     if (options.bleed) {
       addCropMarks(newPage, bleedLength);
     }
@@ -91,7 +93,7 @@ const run = async (options: {
 
   const pdfBytes = await outputPdf.save();
 
-  fs.writeFileSync("output3.pdf", pdfBytes);
+  fs.writeFileSync(options.output, pdfBytes);
 };
 
 run({
@@ -100,4 +102,6 @@ run({
   height: 185,
   docName: "group-cards.indd",
   mirror: true,
+  output: "output.pdf",
+  input: "test.pdf",
 });

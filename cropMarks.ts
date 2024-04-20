@@ -1,8 +1,12 @@
 import { PDFPage, colorString } from "@cantoo/pdf-lib";
 
-const addCropMarks = (page: PDFPage, bleed = 0) => {
+const addCropMarks = (
+  page: PDFPage,
+  bleed = 0,
+  markType: "bleed" | "crop" = "crop"
+) => {
   const offset = 21 + bleed;
-  const length = 18;
+  const length = markType === "bleed" ? 18 : 15;
   const pageWidth = page.getWidth();
   const pageHeight = page.getHeight();
 
