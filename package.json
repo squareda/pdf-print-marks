@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node pdf.ts"
+    "start": "ts-node index.ts",
+    "test": "ts-node test/generateTestFiles.ts"
   },
   "dependencies": {
     "@cantoo/pdf-lib": "^1.21.0",

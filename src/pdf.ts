@@ -10,7 +10,7 @@ const mmToPoints = (mm: number) => mm * 2.83465;
 
 const CROP_LENGTH = 21;
 
-const run = async (options: {
+const pdfPrintMarks = async (options: {
   /** Bleed in mm */
   bleed?: number;
   width: number;
@@ -42,8 +42,6 @@ const run = async (options: {
   //   pdfDoc.addPage([595.28, 841.89]);
 
   const pages = pdfDoc.getPages();
-  const firstPage = pages[0];
-  //   const { width, height } = firstPage.getSize();
 
   const outputPdf = await PDFDocument.create();
   const bleedLength = options?.bleed ? mmToPoints(options.bleed) : 0;
@@ -52,7 +50,7 @@ const run = async (options: {
 
   const date = new Date();
 
-  const clonedPages = await outputPdf.embedPages(pdfDoc.getPages());
+  const clonedPages = await outputPdf.embedPages(pages);
   for (let i = 0; i < pages.length; i++) {
     const newPage = outputPdf.addPage([
       WIDTH + pagePadding * 2,
@@ -63,7 +61,7 @@ const run = async (options: {
     if (mirror) {
       await mirrorBleed({
         currentPage: clonedPages[i],
-        page: pdfDoc.getPage(i),
+        page: pages[i],
         outputPdf,
         newPage,
         bleedLength,
@@ -96,12 +94,4 @@ const run = async (options: {
   fs.writeFileSync(options.output, pdfBytes);
 };
 
-run({
-  bleed: 2,
-  width: 148,
-  height: 185,
-  docName: "group-cards.indd",
-  mirror: true,
-  output: "output.pdf",
-  input: "test.pdf",
-});
+export default pdfPrintMarks;

@@ -2,3 +2,4 @@ node_modules/
 *.pdf
 SVG/
 .DS_Store
+out/
