@@ -5,6 +5,7 @@ import { addRegistrationMarks } from "./registrationMark";
 import addCropMarks from "./cropMarks";
 import addMetadata from "./addMetadata";
 import mirrorBleed, { mirrorEmbedPages } from "./mirrorBleed";
+const packageVersion = require("../package.json").version;
 
 const mmToPoints = (mm: number) => mm * 2.83465;
 
@@ -22,32 +23,12 @@ const pdfPrintMarks = async (options: {
 }) => {
   const file = fs.readFileSync(options.input);
   const pdfDoc = await PDFDocument.load(file);
+  const outputPdf = await PDFDocument.create();
   const WIDTH = mmToPoints(options.width);
   const HEIGHT = mmToPoints(options.height);
-
-  //   console.log(pdfDoc.getPage(0).getSize());
-  //   console.log(pdfDoc.getPage(0).getWidth());
-  //   console.log(pdfDoc.getPage(0).getArtBox());
-  //   console.log(pdfDoc.getPage(0).getBleedBox());
-  //   console.log(pdfDoc.getPage(0).getCropBox());
-  //   console.log(pdfDoc.getPage(0).getTrimBox());
-
-  //   { width: 461.528, height: 566.409 }
-  // 461.528
-  // { x: 21, y: 21, width: 419.528, height: 524.409 }
-  // { x: 21, y: 21, width: 419.528, height: 524.409 }
-  // { x: 0, y: 0, width: 461.528, height: 566.409 }
-  // { x: 21, y: 21, width: 419.528, height: 524.409 }
-  //   const pdfDoc = await PDFDocument.create();
-  //   pdfDoc.addPage([595.28, 841.89]);
-
   const pages = pdfDoc.getPages();
-
-  const outputPdf = await PDFDocument.create();
   const bleedLength = options?.bleed ? mmToPoints(options.bleed) : 0;
-
   const pagePadding = bleedLength + CROP_LENGTH;
-
   const date = new Date();
 
   const clonedPages = await (options.mirror
@@ -94,7 +75,17 @@ const pdfPrintMarks = async (options: {
     if (options.docName) {
       addMetadata(newPage, options.docName, date, i + 1, bleedLength);
     }
+    newPage.setArtBox(CROP_LENGTH, CROP_LENGTH, WIDTH, HEIGHT);
+    newPage.setBleedBox(CROP_LENGTH, CROP_LENGTH, WIDTH, HEIGHT);
+    newPage.setCropBox(0, 0, WIDTH + CROP_LENGTH * 2, HEIGHT + CROP_LENGTH * 2);
+    newPage.setTrimBox(CROP_LENGTH, CROP_LENGTH, WIDTH, HEIGHT);
   }
+
+  const defaultProducer = `pdf-print-marks (${packageVersion})`;
+
+  outputPdf.setProducer(defaultProducer);
+  outputPdf.setCreator(pdfDoc.getCreator() || defaultProducer);
+  outputPdf.setAuthor(pdfDoc.getAuthor() || defaultProducer);
 
   const pdfBytes = await outputPdf.save();
 
