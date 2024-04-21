@@ -1,65 +1,90 @@
 import { PDFDocument, PDFPage, PDFEmbeddedPage } from "@cantoo/pdf-lib";
 
 /**
+ * Embed pages but include duplicate pages with bounding box to add mirrored edges
+ * Used so we only call `embedPages` once so that the pdf size doesn't increase.
+ */
+export const mirrorEmbedPages = ({
+  outputPdf,
+  pages,
+  bleedLength,
+}: {
+  outputPdf: PDFDocument;
+  pages: PDFPage[];
+  bleedLength: number;
+}) => {
+  const originalWidth = pages[0].getWidth();
+  const originalHeight = pages[0].getHeight();
+
+  return outputPdf.embedPages(
+    pages.reduce((acc, page, i) => {
+      if (i === 0) {
+        return [...acc, page, page, page, page, page];
+      }
+      return [...acc, page];
+    }, [] as any),
+    pages.reduce((acc, page, i) => {
+      if (i === 0) {
+        return [
+          ...acc,
+          // Right
+          {
+            top: originalHeight,
+            bottom: 0,
+            left: originalWidth - bleedLength,
+            right: originalWidth,
+          },
+          // Left
+          {
+            top: originalHeight,
+            bottom: 0,
+            left: 0,
+            right: bleedLength,
+          },
+          // Bottom
+          {
+            top: bleedLength,
+            bottom: 0,
+            left: 0,
+            right: originalWidth,
+          },
+          // Top
+          {
+            top: originalHeight - bleedLength,
+            bottom: originalHeight,
+            left: 0,
+            right: originalWidth,
+          },
+          undefined,
+        ];
+      }
+      return [...acc, undefined];
+    }, [] as any)
+  );
+};
+
+/**
  * Mirror the edges of the pdf to create the bleed
  */
 const mirrorBleed = async ({
-  currentPage,
-  page,
-  outputPdf,
+  clonedPages,
+  pageNumber,
   newPage,
   bleedLength,
   cropLength,
   width,
   height,
 }: {
-  currentPage: PDFEmbeddedPage;
-  page: PDFPage;
-  outputPdf: PDFDocument;
+  clonedPages: PDFEmbeddedPage[];
+  pageNumber: number;
   newPage: PDFPage;
   bleedLength: number;
   cropLength: number;
   width: number;
   height: number;
 }) => {
-  const originalWidth = page.getWidth();
-  const originalHeight = page.getHeight();
-  const clonedPage1 = await outputPdf.embedPages(
-    [page, page, page, page, page],
-    [
-      // Right
-      {
-        top: originalHeight,
-        bottom: 0,
-        left: originalWidth - bleedLength,
-        right: originalWidth,
-      },
-      // Left
-      {
-        top: originalHeight,
-        bottom: 0,
-        left: 0,
-        right: bleedLength,
-      },
-      // Bottom
-      {
-        top: bleedLength,
-        bottom: 0,
-        left: 0,
-        right: originalWidth,
-      },
-      // Top
-      {
-        top: originalHeight - bleedLength,
-        bottom: originalHeight,
-        left: 0,
-        right: originalWidth,
-      },
-    ]
-  );
-
   //   Corners
-  newPage.drawPage(clonedPage1[4], {
+  newPage.drawPage(clonedPages[pageNumber + 4], {
     x: cropLength,
     y: cropLength,
     height: height + bleedLength * 2,
@@ -67,7 +92,7 @@ const mirrorBleed = async ({
   });
 
   // main card
-  newPage.drawPage(currentPage, {
+  newPage.drawPage(clonedPages[pageNumber + 4], {
     x: bleedLength + cropLength,
     y: bleedLength + cropLength,
     width,
@@ -75,7 +100,7 @@ const mirrorBleed = async ({
   });
 
   // Right
-  newPage.drawPage(clonedPage1[0], {
+  newPage.drawPage(clonedPages[pageNumber + 0], {
     x: width + bleedLength * 2 + cropLength,
     y: cropLength + bleedLength,
     height,
@@ -83,7 +108,7 @@ const mirrorBleed = async ({
   });
 
   // Left
-  newPage.drawPage(clonedPage1[1], {
+  newPage.drawPage(clonedPages[pageNumber + 1], {
     x: bleedLength + cropLength,
     y: cropLength + bleedLength,
     height,
@@ -91,7 +116,7 @@ const mirrorBleed = async ({
   });
 
   // Bottom
-  newPage.drawPage(clonedPage1[2], {
+  newPage.drawPage(clonedPages[pageNumber + 2], {
     x: cropLength + bleedLength,
     y: bleedLength + cropLength,
     width,
@@ -99,7 +124,7 @@ const mirrorBleed = async ({
   });
 
   // Top
-  newPage.drawPage(clonedPage1[3], {
+  newPage.drawPage(clonedPages[pageNumber + 3], {
     x: cropLength + bleedLength,
     y: height + bleedLength + cropLength,
     width,

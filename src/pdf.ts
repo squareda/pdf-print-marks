@@ -4,7 +4,7 @@ import { addColorBars } from "./colorbars";
 import { addRegistrationMarks } from "./registrationMark";
 import addCropMarks from "./cropMarks";
 import addMetadata from "./addMetadata";
-import mirrorBleed from "./mirrorBleed";
+import mirrorBleed, { mirrorEmbedPages } from "./mirrorBleed";
 
 const mmToPoints = (mm: number) => mm * 2.83465;
 
@@ -50,7 +50,14 @@ const pdfPrintMarks = async (options: {
 
   const date = new Date();
 
-  const clonedPages = await outputPdf.embedPages(pages);
+  const clonedPages = await (options.mirror
+    ? mirrorEmbedPages({
+        outputPdf,
+        pages,
+        bleedLength,
+      })
+    : outputPdf.embedPages(pages));
+
   for (let i = 0; i < pages.length; i++) {
     const newPage = outputPdf.addPage([
       WIDTH + pagePadding * 2,
@@ -60,15 +67,15 @@ const pdfPrintMarks = async (options: {
 
     if (mirror) {
       await mirrorBleed({
-        currentPage: clonedPages[i],
-        page: pages[i],
-        outputPdf,
+        clonedPages,
+        pageNumber: i,
         newPage,
         bleedLength,
         cropLength: CROP_LENGTH,
         width: WIDTH,
         height: HEIGHT,
       });
+      i += 4;
     } else {
       newPage.drawPage(clonedPages[i], {
         x: CROP_LENGTH,
