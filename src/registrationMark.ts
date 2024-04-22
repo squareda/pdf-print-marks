@@ -44,7 +44,7 @@ const drawRegistrationMark = (
 };
 
 export const addRegistrationMarks = (page: PDFPage, offset = 0) => {
-  const markSize = 12.5;
+  const markSize = 12;
   const markPadding = 1 + offset;
   const middleX = page.getWidth() / 2 - markSize / 2;
   const middleY = page.getHeight() / 2 - markSize / 2;
