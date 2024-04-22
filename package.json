@@ -8,12 +8,12 @@
     "test": "ts-node test/generateTestFiles.ts"
   },
   "dependencies": {
-    "@cantoo/pdf-lib": "^1.21.0",
-    "pdf-lib": "^1.17.1"
+    "@cantoo/pdf-lib": "^1.21.0"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
     "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
     "typescript": "^5.4.5"
   }
 }
