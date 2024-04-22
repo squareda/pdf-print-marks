@@ -1,5 +1,5 @@
 import fs from "fs";
-import pdfPrintMarks from "../src/pdf";
+import pdfPrintMarks from "../index";
 
 if (!fs.existsSync("out")) {
   fs.mkdirSync("out");
@@ -9,9 +9,9 @@ const defaultOptions = {
   bleed: 2,
   width: 148,
   height: 185,
-  docName: "group-cards.indd",
+  docName: "64f4d3c7c0b714bef1e3c6da.pdf",
   mirror: false,
-  input: "test.pdf",
+  input: "sample/test.pdf",
 };
 
 pdfPrintMarks({

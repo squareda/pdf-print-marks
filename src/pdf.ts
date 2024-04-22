@@ -11,22 +11,40 @@ const mmToPoints = (mm: number) => mm * 2.83465;
 
 const CROP_LENGTH = 21;
 
-const pdfPrintMarks = async (options: {
+export type PDFPrintMarksOptions = {
+  /** Input pdf file path. One of `input` or `file` is required */
+  input?: string;
+  /** Input pdf file buffer or base64 string. One of `input` or `file` is required */
+  file?: string | Uint8Array | Buffer;
+  /** Output file path. You can ignore this option if you want to process the returned Uint8Array yourself */
+  output?: string;
   /** Bleed in mm */
   bleed?: number;
+  /** Content width in mm */
   width: number;
+  /** Content height in mm */
   height: number;
+  /** Document name if you want it included in page info footer */
   docName?: string;
+  /** Mirror the border to create the bleed (instead of scaling) */
   mirror?: boolean;
-  output: string;
-  input: string;
+  /** Print Marks: render the color bars */
   colorBars?: boolean;
+  /** Print Marks: render the registration marks */
   registrationMarks?: boolean;
+  /** Print Marks: render the crop marks */
   cropMarks?: boolean;
+  /** Print Marks: render the bleed marks */
   bleedMarks?: boolean;
+  /** Print Marks: render the page information */
   pageInformation?: boolean;
-}) => {
-  const file = fs.readFileSync(options.input);
+};
+
+const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
+  if (!options.input && !options.file) {
+    throw new Error("No input file provided. Please specify input or file.");
+  }
+  const file = options.file || fs.readFileSync(options.input!);
   const pdfDoc = await PDFDocument.load(file);
   const outputPdf = await PDFDocument.create();
   const WIDTH = mmToPoints(options.width);
@@ -111,7 +129,11 @@ const pdfPrintMarks = async (options: {
 
   const pdfBytes = await outputPdf.save();
 
-  fs.writeFileSync(options.output, pdfBytes);
+  if (options.output) {
+    fs.writeFileSync(options.output, pdfBytes);
+  }
+
+  return pdfBytes;
 };
 
 export default pdfPrintMarks;

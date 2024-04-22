@@ -1,12 +1,13 @@
 {
   "name": "pdf-print-marks",
   "version": "1.0.0",
-  "main": "src/pdf",
+  "main": "dist/index",
   "license": "MIT",
   "scripts": {
     "start": "ts-node index.ts",
     "test": "ts-node test/generateTestFiles.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "prepare": "yarn build"
   },
   "dependencies": {
     "@cantoo/pdf-lib": "^1.21.0"

@@ -4,3 +4,4 @@ SVG/
 .DS_Store
 out/
 dist/
+!sample/*.pdf
