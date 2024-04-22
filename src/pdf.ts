@@ -71,7 +71,7 @@ const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
     const pageWidth = round(WIDTH + pagePadding * 2);
     const pageHeight = round(HEIGHT + pagePadding * 2);
     const newPage = outputPdf.addPage([pageWidth, pageHeight]);
-    const pageNumber = outputPdf.getPageCount();
+    const pageNumber = outputPdf.getPageCount() - 1;
     const pageBleedMethod = options.getPageOptions?.(pageNumber)?.bleedMethod;
     if (pageBleedMethod === "mirror" && !options.mirror) {
       throw new Error("Mirror bleed method requires mirror option to be set");
@@ -127,7 +127,7 @@ const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
         newPage,
         options.docName || "",
         date,
-        pageNumber,
+        pageNumber + 1,
         bleedLength
       );
     }

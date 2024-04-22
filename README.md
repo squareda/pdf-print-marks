@@ -32,21 +32,22 @@ pdfPrintMarks({
 
 ## Options
 
-| Name              | Type      | Default | Description                                            |
-| ----------------- | --------- | ------- | ------------------------------------------------------ |
-| input             | `string`  |         | The input PDF file path                                |
-| file              | `string`  |         | The input PDF file buffer if not specifying path       |
-| output            | `string`  |         | The output PDF file path                               |
-| width             | `number`  |         | The width of the PDF page in mm                        |
-| height            | `number`  |         | The height of the PDF page in mm                       |
-| bleed             | `number`  | 0       | The bleed margin in mm                                 |
-| mirror            | `boolean` | false   | Mirror the edges of the PDF page                       |
-| docName           | `string`  |         | Add the document name at the bottom of the page        |
-| cropMarks         | `boolean` | true    | Add crop marks to the document                         |
-| bleedMarks        | `boolean` | true    | Add bleed marks to the document                        |
-| registrationMarks | `boolean` | true    | Add registration marks to the document                 |
-| colorBars         | `boolean` | true    | Add color bars to the document                         |
-| pageInformation   | `boolean` | true    | Add the document information at the bottom of the page |
+| Name              | Type       | Default | Description                                             |
+| ----------------- | ---------- | ------- | ------------------------------------------------------- |
+| input             | `string`   |         | The input PDF file path                                 |
+| file              | `string`   |         | The input PDF file buffer if not specifying path        |
+| output            | `string`   |         | The output PDF file path                                |
+| width             | `number`   |         | The width of the PDF page in mm                         |
+| height            | `number`   |         | The height of the PDF page in mm                        |
+| bleed             | `number`   | 0       | The bleed margin in mm                                  |
+| mirror            | `boolean`  | false   | Mirror the edges of the PDF page                        |
+| docName           | `string`   |         | Add the document name at the bottom of the page         |
+| cropMarks         | `boolean`  | true    | Add crop marks to the document                          |
+| bleedMarks        | `boolean`  | true    | Add bleed marks to the document                         |
+| registrationMarks | `boolean`  | true    | Add registration marks to the document                  |
+| colorBars         | `boolean`  | true    | Add color bars to the document                          |
+| pageInformation   | `boolean`  | true    | Add the document information at the bottom of the page  |
+| getPageOptions    | `function` |         | Function to get custom options for a page. See TS docs. |
 
 ## Mark Types
 

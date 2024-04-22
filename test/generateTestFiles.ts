@@ -74,3 +74,12 @@ pdfPrintMarks({
   pageInformation: false,
   output: "out/no-marks.pdf",
 });
+
+pdfPrintMarks({
+  ...defaultOptions,
+  getPageOptions: (page) => ({
+    bleedMethod: page === 0 ? "mirror" : page === 1 ? "scale" : "none",
+  }),
+  mirror: true,
+  output: "out/custom-pages.pdf",
+});

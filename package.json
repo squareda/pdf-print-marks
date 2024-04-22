@@ -1,6 +1,6 @@
 {
   "name": "pdf-print-marks",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/index",
   "license": "MIT",
   "scripts": {
