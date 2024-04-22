@@ -3,58 +3,58 @@ import { FillRule, colorString, PDFPage } from "@cantoo/pdf-lib";
 const paths = [
   {
     path: "M0.5 14.5L14.5 14.5L14.5 0.5L0.5 0.5L0.5 14.5z",
-    color: "#fff500",
-    greyscale: "#0a0b0c",
+    color: "#fff34a",
+    greyscale: "#000000",
   },
   {
     path: "M14.5 14.5L28.5 14.5L28.5 0.5L14.5 0.5L14.5 14.5z",
-    color: "#dd137b",
-    greyscale: "#131113",
+    color: "#d92d8a",
+    greyscale: "#1a1a1a",
   },
   {
     path: "M28.5 14.5L42.5 14.5L42.5 0.5L28.5 0.5L28.5 14.5z",
-    color: "#0093dd",
-    greyscale: "#1d1a1b",
+    color: "#00aae9",
+    greyscale: "#333333",
   },
   {
     path: "M42.5 14.5L56.5 14.5L56.5 0.5L42.5 0.5L42.5 14.5z",
-    color: "#28166f",
-    greyscale: "#2a2525",
+    color: "#2f308d",
+    greyscale: "#4d4d4d",
   },
   {
     path: "M56.5 14.5L70.5 14.5L70.5 0.5L56.5 0.5L56.5 14.5z",
-    color: "#00923f",
-    greyscale: "#3a3534",
+    color: "#00a359",
+    greyscale: "#666666",
   },
   {
     path: "M70.5 14.5L84.5 14.5L84.5 0.5L70.5 0.5L70.5 14.5z",
-    color: "#da251d",
-    greyscale: "#4d4846",
+    color: "#da3832",
+    greyscale: "#808080",
   },
   {
     path: "M84.5 14.5L98.5 14.5L98.5 0.5L84.5 0.5L84.5 14.5z",
-    color: "#1f1a17",
-    greyscale: "#635d5c",
+    color: "#000000",
+    greyscale: "#999999",
   },
   {
     path: "M98.5 14.5L112.5 14.5L112.5 0.5L98.5 0.5L98.5 14.5z",
-    color: "#fffa88",
-    greyscale: "#7c7674",
+    color: "#fff8a5",
+    greyscale: "#b2b2b2",
   },
   {
     path: "M112.5 14.5L126.5 14.5L126.5 0.5L112.5 0.5L112.5 14.5z",
-    color: "#ed88b1",
-    greyscale: "#9a9493",
+    color: "#e79ec0",
+    greyscale: "#cccccc",
   },
   {
     path: "M126.5 14.5L140.5 14.5L140.5 0.5L126.5 0.5L126.5 14.5z",
-    color: "#56bbed",
-    greyscale: "#c5c1c0",
+    color: "#86cdf2",
+    greyscale: "#e5e5e5",
   },
   {
     path: "M140.5 14.5L154.5 14.5L154.5 0.5L140.5 0.5L140.5 14.5z",
-    color: "#838281",
-    greyscale: "#fff",
+    color: "#949598",
+    greyscale: "#ffffff",
   },
 ];
 
@@ -71,6 +71,8 @@ const borderPaths = [
   { path: "M126.5 0.5L140.5 0.5L140.5 14.5L126.5 14.5L126.5 0.5z" },
   { path: "M140.5 0.5L154.5 0.5L154.5 14.5L140.5 14.5L140.5 0.5z" },
 ];
+
+const BORDER_COLOR = "#595959";
 
 const drawColorBars = (
   page: PDFPage,
@@ -90,7 +92,7 @@ const drawColorBars = (
       y,
     });
     page.drawSvgPath(borderPaths[i].path, {
-      borderColor: colorString("#322d2c").rgb,
+      borderColor: colorString(BORDER_COLOR).rgb,
       borderWidth: 1,
       x,
       y,
@@ -101,7 +103,7 @@ const drawColorBars = (
 const COLOR_BAR_WIDTH = 14;
 const COLOR_BAR_COUNT = 11;
 const BORDER_WIDTH = 0.5;
-const BAR_OFFSET = 5;
+const BAR_OFFSET = 6;
 const CENTER_OFFSET = 12;
 const WIDTH = COLOR_BAR_WIDTH * COLOR_BAR_COUNT + BORDER_WIDTH * 2;
 
