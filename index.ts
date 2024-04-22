@@ -1,1 +1,2 @@
-export { default, PDFPrintMarksOptions } from "./src/pdf";
+export { default } from "./src/pdf";
+export type { PDFPrintMarksOptions } from "./src/pdf";

@@ -5,9 +5,11 @@ import { addRegistrationMarks } from "./registrationMark";
 import addCropMarks from "./cropMarks";
 import addMetadata from "./addMetadata";
 import mirrorBleed, { mirrorEmbedPages } from "./mirrorBleed";
+import { GetPageOptions } from "./types";
 const packageVersion = require("../package.json").version;
 
-const mmToPoints = (mm: number) => mm * 2.83465;
+const round = (num: number) => Number(num.toFixed(3));
+const mmToPoints = (mm: number) => mm * 2.8346456693;
 
 const CROP_LENGTH = 21;
 
@@ -38,6 +40,8 @@ export type PDFPrintMarksOptions = {
   bleedMarks?: boolean;
   /** Print Marks: render the page information */
   pageInformation?: boolean;
+  /** Set custom page options */
+  getPageOptions?: GetPageOptions;
 };
 
 const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
@@ -59,15 +63,22 @@ const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
         outputPdf,
         pages,
         bleedLength,
+        getPageOptions: options.getPageOptions,
       })
     : outputPdf.embedPages(pages));
 
   for (let i = 0; i < clonedPages.length; i++) {
-    const newPage = outputPdf.addPage([
-      WIDTH + pagePadding * 2,
-      HEIGHT + pagePadding * 2,
-    ]);
-    const mirror = options.mirror && i === 0;
+    const pageWidth = round(WIDTH + pagePadding * 2);
+    const pageHeight = round(HEIGHT + pagePadding * 2);
+    const newPage = outputPdf.addPage([pageWidth, pageHeight]);
+    const pageNumber = outputPdf.getPageCount();
+    const pageBleedMethod = options.getPageOptions?.(pageNumber)?.bleedMethod;
+    if (pageBleedMethod === "mirror" && !options.mirror) {
+      throw new Error("Mirror bleed method requires mirror option to be set");
+    }
+    const mirror =
+      pageBleedMethod === "mirror" ||
+      (!pageBleedMethod && options.mirror && i === 0);
 
     if (mirror) {
       await mirrorBleed({
@@ -81,12 +92,22 @@ const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
       });
       i += 4;
     } else {
-      newPage.drawPage(clonedPages[i], {
-        x: CROP_LENGTH,
-        y: CROP_LENGTH,
-        width: WIDTH + bleedLength * 2,
-        height: HEIGHT + bleedLength * 2,
-      });
+      newPage.drawPage(
+        clonedPages[i],
+        pageBleedMethod === "none"
+          ? {
+              x: CROP_LENGTH + bleedLength,
+              y: CROP_LENGTH + bleedLength,
+              width: WIDTH,
+              height: HEIGHT,
+            }
+          : {
+              x: CROP_LENGTH,
+              y: CROP_LENGTH,
+              width: WIDTH + bleedLength * 2,
+              height: HEIGHT + bleedLength * 2,
+            }
+      );
     }
 
     if (options.colorBars !== false) {
@@ -106,10 +127,11 @@ const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
         newPage,
         options.docName || "",
         date,
-        outputPdf.getPageCount(),
+        pageNumber,
         bleedLength
       );
     }
+    newPage.setMediaBox(0, 0, pageWidth, pageHeight);
     newPage.setArtBox(pagePadding, pagePadding, WIDTH, HEIGHT);
     newPage.setBleedBox(
       CROP_LENGTH,
@@ -117,7 +139,7 @@ const pdfPrintMarks = async (options: PDFPrintMarksOptions) => {
       WIDTH + bleedLength * 2,
       HEIGHT + bleedLength * 2
     );
-    newPage.setCropBox(0, 0, WIDTH + pagePadding * 2, HEIGHT + pagePadding * 2);
+    newPage.setCropBox(0, 0, pageWidth, pageHeight);
     newPage.setTrimBox(pagePadding, pagePadding, WIDTH, HEIGHT);
   }
 

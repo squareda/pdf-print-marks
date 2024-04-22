@@ -1,12 +1,12 @@
 {
   "name": "pdf-print-marks",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "main": "dist/index",
   "license": "MIT",
   "scripts": {
     "start": "ts-node index.ts",
     "test": "ts-node test/generateTestFiles.ts",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "prepare": "yarn build"
   },
   "dependencies": {

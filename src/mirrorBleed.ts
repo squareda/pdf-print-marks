@@ -1,4 +1,5 @@
 import { PDFDocument, PDFPage, PDFEmbeddedPage } from "@cantoo/pdf-lib";
+import { GetPageOptions } from "./types";
 
 /**
  * Embed pages but include duplicate pages with bounding box to add mirrored edges
@@ -8,23 +9,30 @@ export const mirrorEmbedPages = ({
   outputPdf,
   pages,
   bleedLength,
+  getPageOptions,
 }: {
   outputPdf: PDFDocument;
   pages: PDFPage[];
   bleedLength: number;
+  getPageOptions?: GetPageOptions;
 }) => {
   const originalWidth = pages[0].getWidth();
   const originalHeight = pages[0].getHeight();
 
+  const shouldMirror = (page: number) => {
+    const bleedMethod = getPageOptions?.(page)?.bleedMethod;
+    return bleedMethod === "mirror" || (!bleedMethod && page === 0);
+  };
+
   return outputPdf.embedPages(
     pages.reduce((acc, page, i) => {
-      if (i === 0) {
+      if (shouldMirror(i)) {
         return [...acc, page, page, page, page, page];
       }
       return [...acc, page];
     }, [] as any),
     pages.reduce((acc, page, i) => {
-      if (i === 0) {
+      if (shouldMirror(i)) {
         return [
           ...acc,
           // Right
