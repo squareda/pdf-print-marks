@@ -75,10 +75,15 @@ const pdfPrintMarks = async (options: {
     if (options.docName) {
       addMetadata(newPage, options.docName, date, i + 1, bleedLength);
     }
-    newPage.setArtBox(CROP_LENGTH, CROP_LENGTH, WIDTH, HEIGHT);
-    newPage.setBleedBox(CROP_LENGTH, CROP_LENGTH, WIDTH, HEIGHT);
-    newPage.setCropBox(0, 0, WIDTH + CROP_LENGTH * 2, HEIGHT + CROP_LENGTH * 2);
-    newPage.setTrimBox(CROP_LENGTH, CROP_LENGTH, WIDTH, HEIGHT);
+    newPage.setArtBox(pagePadding, pagePadding, WIDTH, HEIGHT);
+    newPage.setBleedBox(
+      CROP_LENGTH,
+      CROP_LENGTH,
+      WIDTH + bleedLength * 2,
+      HEIGHT + bleedLength * 2
+    );
+    newPage.setCropBox(0, 0, WIDTH + pagePadding * 2, HEIGHT + pagePadding * 2);
+    newPage.setTrimBox(pagePadding, pagePadding, WIDTH, HEIGHT);
   }
 
   const defaultProducer = `pdf-print-marks (${packageVersion})`;
