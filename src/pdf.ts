@@ -39,7 +39,7 @@ const pdfPrintMarks = async (options: {
       })
     : outputPdf.embedPages(pages));
 
-  for (let i = 0; i < pages.length; i++) {
+  for (let i = 0; i < clonedPages.length; i++) {
     const newPage = outputPdf.addPage([
       WIDTH + pagePadding * 2,
       HEIGHT + pagePadding * 2,
@@ -73,7 +73,13 @@ const pdfPrintMarks = async (options: {
       addCropMarks(newPage, bleedLength);
     }
     if (options.docName) {
-      addMetadata(newPage, options.docName, date, i + 1, bleedLength);
+      addMetadata(
+        newPage,
+        options.docName,
+        date,
+        outputPdf.getPageCount(),
+        bleedLength
+      );
     }
     newPage.setArtBox(pagePadding, pagePadding, WIDTH, HEIGHT);
     newPage.setBleedBox(
