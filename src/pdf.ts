@@ -20,6 +20,11 @@ const pdfPrintMarks = async (options: {
   mirror?: boolean;
   output: string;
   input: string;
+  colorBars?: boolean;
+  registrationMarks?: boolean;
+  cropMarks?: boolean;
+  bleedMarks?: boolean;
+  pageInformation?: boolean;
 }) => {
   const file = fs.readFileSync(options.input);
   const pdfDoc = await PDFDocument.load(file);
@@ -66,16 +71,22 @@ const pdfPrintMarks = async (options: {
       });
     }
 
-    addColorBars(newPage, pagePadding, bleedLength);
-    addRegistrationMarks(newPage, bleedLength);
-    addCropMarks(newPage, 0, "bleed");
-    if (options.bleed) {
+    if (options.colorBars !== false) {
+      addColorBars(newPage, pagePadding, bleedLength);
+    }
+    if (options.registrationMarks !== false) {
+      addRegistrationMarks(newPage, bleedLength);
+    }
+    if (options.bleedMarks !== false) {
+      addCropMarks(newPage, 0, "bleed");
+    }
+    if (options.bleed && options.cropMarks !== false) {
       addCropMarks(newPage, bleedLength);
     }
-    if (options.docName) {
+    if (options.pageInformation !== false) {
       addMetadata(
         newPage,
-        options.docName,
+        options.docName || "",
         date,
         outputPdf.getPageCount(),
         bleedLength

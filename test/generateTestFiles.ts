@@ -64,3 +64,13 @@ pdfPrintMarks({
   height: defaultOptions.height * 0.5,
   output: "out/0.5x.pdf",
 });
+
+pdfPrintMarks({
+  ...defaultOptions,
+  colorBars: false,
+  bleedMarks: false,
+  cropMarks: false,
+  registrationMarks: false,
+  pageInformation: false,
+  output: "out/no-marks.pdf",
+});
