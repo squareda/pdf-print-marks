@@ -3,3 +3,4 @@ node_modules/
 SVG/
 .DS_Store
 out/
+dist/
