@@ -98,21 +98,38 @@ const drawColorBars = (
   });
 };
 
+const COLOR_BAR_WIDTH = 14;
+const COLOR_BAR_COUNT = 11;
+const BORDER_WIDTH = 0.5;
+const BAR_OFFSET = 5;
+const CENTER_OFFSET = 12;
+const WIDTH = COLOR_BAR_WIDTH * COLOR_BAR_COUNT + BORDER_WIDTH * 2;
+
+export const colorBarsTooBigForPage = (
+  pageWidth: number,
+  pagePadding: number
+) => {
+  return WIDTH * 2 > pageWidth - (pagePadding * 2 + BAR_OFFSET * 2);
+};
+
 export const addColorBars = (
   page: PDFPage,
   pagePadding: number,
   bleedLength: number
 ) => {
-  const barOffset = 5;
+  const centerAlign = colorBarsTooBigForPage(page.getWidth(), pagePadding);
+
+  const center = page.getWidth() / 2;
   drawColorBars(page, {
-    // 11*14 is number of bars * width of each bar
-    x: page.getWidth() - 11 * 14 - 1 - pagePadding - barOffset,
+    x: centerAlign
+      ? center + CENTER_OFFSET
+      : page.getWidth() - WIDTH - pagePadding - BAR_OFFSET,
     y: bleedLength,
     type: "color",
   });
 
   drawColorBars(page, {
-    x: pagePadding + barOffset,
+    x: centerAlign ? center - WIDTH - CENTER_OFFSET : pagePadding + BAR_OFFSET,
     y: bleedLength,
     type: "greyscale",
   });
