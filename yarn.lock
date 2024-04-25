@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@cantoo/pdf-lib@^1.21.0":
-  version "1.21.0"
-  resolved "https://registry.yarnpkg.com/@cantoo/pdf-lib/-/pdf-lib-1.21.0.tgz#ce177ddae09dfc94a2cbd4a65842c732183dc30a"
-  integrity sha512-BlUyKYryyfp027FXDRrMtkW98MCCLlFzHFDSuXddpy9cWODwkLCw7Erd3fDeUgIHx9ryJB0h26RONzf00g25mA==
+"@cantoo/pdf-lib@^1.21.1":
+  version "1.21.1"
+  resolved "https://registry.yarnpkg.com/@cantoo/pdf-lib/-/pdf-lib-1.21.1.tgz#55088d5944b6f21281f8573a1c93c5f08ccdb81d"
+  integrity sha512-ggPKdexF9Aa2hpDLL57dmydcEG28JWYXVFij2Tc8WwlQVhcYw7Tr/uvNf8NcPNcjyt2yeuWfV+/nCtSf5HCSlA==
   dependencies:
     "@pdf-lib/standard-fonts" "^1.0.0"
     "@pdf-lib/upng" "^1.0.1"

@@ -10,7 +10,7 @@
     "prepare": "yarn build"
   },
   "dependencies": {
-    "@cantoo/pdf-lib": "^1.21.0"
+    "@cantoo/pdf-lib": "^1.21.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
